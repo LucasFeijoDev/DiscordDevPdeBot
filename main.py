@@ -1,31 +1,50 @@
 #Blibiotecas, comandos e libraries
 
-import discord
-from discord.ext.commands import Bot
+import discord 
 from discord.ext import commands
-import os
-
-#TOKEN para acesso
-
-TOKEN = 'MTA2NTAyMzMwOTI5ODgwNjc5NA.GndGbj.6Yz39Jg6WkPA-RJNiO0TPZWL_bQmvNHJ88MWns'
-
-#Intenção, permissão e prefixo do BOT
+from discord import app_commands
 
 intents = discord.Intents.default()
-bot = commands.Bot(command_prefix='.', intents=intents)
-client = discord.Client(intents=intents)
+intents.message_content = True
+bot = commands.Bot(command_prefix = 'p!', intents = intents)
 
-#Mensagem no console quando estiver online
+TOKEN = 'TOKEN AQUI'
 
-@client.event
+#Falar para o console que o BOT está on
+@bot.event
 async def on_ready():
     print('Estou online e funcionando!')
+    try: 
+        synced = await bot.tree.sync()
+        print(f'{len(synced)} comando(s) sincronizados.')
+    except Exception as e:
+        print(e)
 
-#Assim que marcado o BOT oferece ajuda
 
-@client.event 
+#Quando alguém marcar o BOT dar uma mensagem
+@bot.event 
 async def on_message(message):
-    if client.user.mention in message.content:
-        await message.channel.send('Olá meu amigo, você pode digitar ".help" para obter ajuda.')
+    if bot.user.mention in message.content:
+        await message.channel.send('Olá meu amigo, você pode digitar "p!ajuda" para obter ajuda.')
 
-client.run(TOKEN)    
+
+
+#Comando de ajuda
+
+
+
+
+#Comando de apresentação
+@bot.tree.command(name='ola')
+async def hello(interaction: discord.Interaction):
+    await interaction.response.send_message(f'Olá {interaction.user.mention}! Eu sou o PDEBOT.')
+    
+
+#Comando de falar por você
+@bot.tree.command(name='falar')
+@app_commands.describe(thing_to_say = 'Oque eu deveria falar por você?')
+async def say(interaction: discord.Interaction, thing_to_say: str):
+    await interaction.response.send_message(f'{interaction.user.name} falou: {thing_to_say}')
+
+
+bot.run(TOKEN)    
