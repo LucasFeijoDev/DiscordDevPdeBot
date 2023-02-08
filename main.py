@@ -11,41 +11,41 @@ bot = commands.Bot(command_prefix = 'p!', intents = intents)
 TOKEN = 'TOKEN AQUI'
 
 #Falar para o console que o BOT está on
-@client.event
+@bot.event
 async def on_ready():
     print('Estou online e funcionando!')
     try: 
-        synced = await client.tree.sync()
+        synced = await bot.tree.sync()
         print(f'{len(synced)} comando(s) sincronizados.')
     except Exception as e:
         print(e)
 
 
 #Quando alguém marcar o BOT dar uma mensagem
-@client.event
+@bot.event 
 async def on_message(message):
-    if message.mentions and client.user in message.mentions:
-        await message.channel.send('Olá meu amigo, você pode digitar "p!ajuda" para ver oque eu tenho pra você.')
+    if bot.user.mention in message.content:
+        await message.channel.send('Olá meu amigo, você pode digitar "p!ajuda" para obter ajuda.')
 
 
 #Comando de ajuda
-@client.event
+@bot.event
 async def on_message(message):
     if message.content == 'p!ajuda':
         await message.channel.send('Estou configurando certinho o comando de ajuda, mas em breve eu posso te ajudar.')
 
 
 #Comando de apresentação
-@client.tree.command(name='ola')
+@bot.tree.command(name='ola')
 async def ola(interaction: discord.Interaction):
-    await interaction.response.send_message(f'Olá {interaction.user.mention}! eu sou o PDEBOT.')
+    await interaction.response.send_message(f'Olá {interaction.user.mention}! Eu sou o PDEBOT.')
     
 
 #Comando de falar por você
-@client.tree.command(name='falar')
+@bot.tree.command(name='falar')
 @app_commands.describe(palavra_frase = 'Oque eu deveria falar por você?')
 async def say(interaction: discord.Interaction, palavra_frase: str):
     await interaction.response.send_message(f'{interaction.user.name} falou: {palavra_frase}')
 
 
-client.run(TOKEN)
+bot.run(TOKEN)    
