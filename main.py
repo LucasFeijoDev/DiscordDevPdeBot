@@ -37,17 +37,17 @@ async def on_message(message):
         await message.channel.send('Estou configurando certinho o comando de ajuda, mas em breve eu posso te ajudar.')
 
 
-#Comando de apresentação
+##Comando de apresentação
 @bot.tree.command(name='ola')
-async def hello(interaction: discord.Interaction):
+async def ola(interaction: discord.Interaction):
     await interaction.response.send_message(f'Olá {interaction.user.mention}! Eu sou o PDEBOT.')
     
 
 #Comando de falar por você
 @bot.tree.command(name='falar')
-@app_commands.describe(thing_to_say = 'Oque eu deveria falar por você?')
-async def say(interaction: discord.Interaction, thing_to_say: str):
-    await interaction.response.send_message(f'{interaction.user.name} falou: {thing_to_say}')
+@app_commands.describe(palavra_frase = 'Oque eu deveria falar por você?')
+async def say(interaction: discord.Interaction, palavra_frase: str):
+    await interaction.response.send_message(f'{interaction.user.name} falou: {palavra_frase}')
 
 
 bot.run(TOKEN)    
