@@ -31,7 +31,10 @@ async def on_message(message):
 
 #Comando de ajuda
 
-
+@bot.event
+async def on_message(message):
+    if message.content == 'p!ajuda':
+        await message.channel.send('Estou configurando certinho o comando de ajuda, mas em breve eu posso te ajudar.')
 
 
 #Comando de apresentação
