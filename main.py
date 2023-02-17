@@ -8,7 +8,7 @@ intents = discord.Intents.default()
 intents.message_content = True
 bot = commands.Bot(command_prefix = 'p!', intents = intents)
 
-TOKEN = 'TOKEN AQUI'
+TOKEN = 'MTA2NTAyMzMwOTI5ODgwNjc5NA.GWzMHm.Zh8egRz0ynbOkmiAyoH7lomgujIP-aBhgkygZw'
 
 #Falar para o console que o BOT está on
 @bot.event
@@ -46,6 +46,25 @@ async def ola(interaction: discord.Interaction):
 @app_commands.describe(palavra_frase = 'Oque eu deveria falar por você?')
 async def say(interaction: discord.Interaction, palavra_frase: str):
     await interaction.response.send_message(f'{interaction.user.name} falou: {palavra_frase}')
+
+
+#Comando para kickar/banir
+@bot.command()
+@commands.has_permissions(kick_members=True)
+async def kick(ctx, member:discord.Member, *, reason=None):
+    if reason == None:
+        reason='Sem motivo'
+    await ctx.guild.kick(member)
+    await ctx.send(f'Usuário {member.mention} foi kickado do servidor por {reason}')
+
+
+@bot.command()
+@commands.has_permissions(ban_members=True)
+async def ban(ctx, member:discord.Member, *, reason=None):
+    if reason == None:
+        reason='Sem motivo'
+    await ctx.guild.ban(member)
+    await ctx.send(f'Usuário {member.mention} foi banido do servidor por {reason}')
 
 
 bot.run(TOKEN)    
