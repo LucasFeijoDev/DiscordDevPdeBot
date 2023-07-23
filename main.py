@@ -8,8 +8,6 @@ intents = discord.Intents.default()
 intents.message_content = True
 bot = commands.Bot(command_prefix = 'p!', intents = intents)
 
-TOKEN = 'MTA2NTAyMzMwOTI5ODgwNjc5NA.GWzMHm.Zh8egRz0ynbOkmiAyoH7lomgujIP-aBhgkygZw'
-
 #Falar para o console que o BOT está on
 @bot.event
 async def on_ready():
