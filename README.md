@@ -1,8 +1,8 @@
-# Meu Bot para Diversão
+# Meu Bot
 
 ## Descrição
 
-Bem-vindo(a) ao repositório do meu bot de Discord para diversão! Esse bot foi desenvolvido com o objetivo de proporcionar uma experiência divertida e interativa para os usuários do servidor.
+Bem-vindo(a) ao repositório do meu bot de Discord! Esse bot foi desenvolvido com o objetivo de me ajudar nos estudos, de forma que consiga mostrar minhas habilidades.
 
 ## Funcionalidades
 
