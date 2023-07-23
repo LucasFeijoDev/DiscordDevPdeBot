@@ -10,7 +10,6 @@ intents.message_content = True
 bot = commands.Bot(command_prefix = 'p!', intents = intents)
 
 load_dotenv()
-print(os.getenv('TOKEN'))
 
 TOKEN = os.getenv('TOKEN')
 
@@ -21,11 +20,13 @@ else:
     @bot.event
     async def on_ready():
         print('Estou online e funcionando!')
-        try: 
-            synced = await bot.tree.sync()
-            print(f'{len(synced)} comando(s) sincronizados.')
-        except Exception as e:
-            print(e)
+
+    #Quando alguém marcar o BOT dar uma mensagem
+    @bot.event
+    async def on_message(message):
+        if bot.user.mention in message.mentions:
+            await message.channel.send('Olá você pode digitar "p!ajuda" para saber mais!')
+
 
     #Comando de ajuda
     @bot.event
