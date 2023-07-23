@@ -27,14 +27,6 @@ else:
         except Exception as e:
             print(e)
 
-
-    #Quando alguém marcar o BOT dar uma mensagem
-    @bot.event 
-    async def on_message(message):
-        if bot.user.mention in message.content:
-            await message.channel.send('Olá meu amigo, você pode digitar "p!ajuda" para obter ajuda.')
-
-
     #Comando de ajuda
     @bot.event
     async def on_message(message):
