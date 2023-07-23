@@ -1,13 +1,17 @@
 import discord
 from discord.ext import commands
-from discord import app_commands
 
 import os
 from dotenv import load_dotenv
 
 intents = discord.Intents.default()
+intents.typing = True                
+intents.messages = True              
+intents.reactions = True           
+intents.guilds = True               
 intents.message_content = True
-bot = commands.Bot(command_prefix = 'p!', intents = intents)
+
+bot = commands.Bot(command_prefix='p!', intents=intents)
 
 load_dotenv()
 
@@ -16,22 +20,23 @@ TOKEN = os.getenv('TOKEN')
 if TOKEN is None:
     print("O token do bot não foi configurado corretamente nas variáveis de ambiente.")
 else:
-    #Falar para o console que o BOT está on
+    # Falar para o console que o BOT está on
     @bot.event
     async def on_ready():
         print('Estou online e funcionando!')
 
-    #Quando alguém marcar o BOT dar uma mensagem
+    # Comando de ajuda
+    @bot.command()
+    async def ajuda(ctx):
+        await ctx.send('Estou configurando certinho o comando de ajuda, mas em breve eu posso te ajudar.')
+
+    # Resposta ao mencionar o bot
     @bot.event
     async def on_message(message):
-        if bot.user.mention in message.mentions:
-            await message.channel.send('Olá você pode digitar "p!ajuda" para saber mais!')
+        #Quando mencionado ele responde o usuário
+        if bot.user.mentioned_in(message):
+            await message.channel.send('Você pode digitar "p!ajuda" para obter mais informações.')
 
+        await bot.process_commands(message)
 
-    #Comando de ajuda
-    @bot.event
-    async def on_message(message):
-        if message.content == 'p!ajuda':
-            await message.channel.send('Estou configurando certinho o comando de ajuda, mas em breve eu posso te ajudar.')
-
-    bot.run(TOKEN)    
+    bot.run(TOKEN)
