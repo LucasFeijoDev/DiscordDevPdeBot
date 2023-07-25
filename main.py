@@ -30,6 +30,18 @@ else:
     async def ajuda(ctx):
         await ctx.send('Estou configurando certinho o comando de ajuda, mas em breve eu posso te ajudar.')
 
+    #Comando de brincadeira Ping
+    @bot.command()
+    async def ping(ctx):
+        await ctx.send('Pong!')
+
+    #Comando de mandar mensagem
+    @bot.command()
+    async def falar(ctx, *, mensagem):
+        mensagem_falada = f"{mensagem}"
+        await ctx.send(mensagem_falada)
+        await ctx.message.delete()
+
     # Resposta ao mencionar o bot
     @bot.event
     async def on_message(message):
@@ -38,5 +50,6 @@ else:
             await message.channel.send('Você pode digitar "p!ajuda" para obter mais informações.')
 
         await bot.process_commands(message)
+
 
     bot.run(TOKEN)
