@@ -5,6 +5,7 @@ import os
 from dotenv import load_dotenv
 
 import requests
+import asyncio
 
 intents = discord.Intents.default()
 intents.typing = True                
@@ -22,10 +23,6 @@ TOKEN = os.getenv('TOKEN')
 if TOKEN is None:
     print("O token do bot não foi configurado corretamente nas variáveis de ambiente.")
 else:
-    # Falar para o console que o BOT está on
-    @bot.event
-    async def on_ready():
-        print('Estou online e funcionando!')
 
     # Comando de ajuda
     @bot.command()
@@ -59,7 +56,7 @@ else:
     GITHUB_REPO = 'DiscordDevPdeBot'
 
     def check_for_commits():
-        url = f'https://github.com/LucasFeijoDev/DiscordDevPdeBot'
+        url = f'https://api.github.com/repos/{GITHUB_OWNER}/{GITHUB_REPO}/commits'
         response = requests.get(url)
 
         if response.status_code == 200:
@@ -78,6 +75,10 @@ else:
             await channel.send(f'Novo commit no repositório {GITHUB_REPO}! SHA: {last_commit}')
             await asyncio.sleep(60)  # Verifica a cada 60 segundos
 
+    # Falar para o console que o BOT está on
+    @bot.event
+    async def on_ready():
+        print(f'Estou online e funcionando {bot.user}!')
         bot.loop.create_task(commit_checker())
 
     bot.run(TOKEN)
