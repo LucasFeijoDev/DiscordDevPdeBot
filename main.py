@@ -57,16 +57,15 @@ else:
 
     last_commit_sent = None
 
-    def check_for_commits():
+    def get_last_commits():
         url = f'https://api.github.com/repos/{GITHUB_OWNER}/{GITHUB_REPO}/commits'
         response = requests.get(url)
 
         if response.status_code == 200:
             commits = response.json()
-            last_commit = commits[0]['sha']
-            return last_commit
+            return [commit['sha'] for commit in commits[:3]]
         else:
-            return None
+            return []
 
     async def commit_checker():
         global last_commit_sent
@@ -75,13 +74,15 @@ else:
         channel = bot.get_channel(DISCORD_CHANNEL_ID)
 
         while not bot.is_closed():
-            last_commit = check_for_commits()
+            last_commits = get_last_commits()
 
-            if last_commit and last_commit != last_commit_sent:
-                await channel.send(f'Novo commit no repositório {GITHUB_REPO}!')
-                last_commit_sent = last_commit
+            if last_commits and last_commits != last_commit_sent:
+                new_commits = set(last_commits) - set(last_commit_sent)
+                for commit in new_commits:
+                    await channel.send(f'Novo commit no repositório {GITHUB_REPO}! SHA: {commit}')
+                last_commit_sent = last_commits
 
-            await asyncio.sleep(10)  # Verifica a cada 60 segundos
+            await asyncio.sleep(10)  
    
     # Falar para o console que o BOT está on
     @bot.event
