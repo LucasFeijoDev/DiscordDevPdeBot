@@ -4,6 +4,8 @@ from discord.ext import commands
 import os
 from dotenv import load_dotenv
 
+import requests
+
 intents = discord.Intents.default()
 intents.typing = True                
 intents.messages = True              
@@ -51,5 +53,31 @@ else:
 
         await bot.process_commands(message)
 
+    #Comentando sempre que tem algum commit no repositório
+    DISCORD_CHANNEL_ID = 1133787510301003806
+    GITHUB_OWNER = 'LucasFeijoDev'
+    GITHUB_REPO = 'DiscordDevPdeBot'
+
+    def check_for_commits():
+        url = f'https://github.com/LucasFeijoDev/DiscordDevPdeBot'
+        response = requests.get(url)
+
+        if response.status_code == 200:
+            commits = response.json()
+            last_commit = commits[0]['sha']
+            return last_commit
+        else:
+            return None
+
+    async def commit_checker():
+        await bot.wait_until_ready()
+        channel = bot.get_channel(DISCORD_CHANNEL_ID)
+
+        while not bot.is_closed():
+            last_commit = check_for_commits()
+            await channel.send(f'Novo commit no repositório {GITHUB_REPO}! SHA: {last_commit}')
+            await asyncio.sleep(60)  # Verifica a cada 60 segundos
+
+        bot.loop.create_task(commit_checker())
 
     bot.run(TOKEN)
