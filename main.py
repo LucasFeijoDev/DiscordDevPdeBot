@@ -55,38 +55,37 @@ else:
     GITHUB_OWNER = 'LucasFeijoDev'
     GITHUB_REPO = 'DiscordDevPdeBot'
 
-    last_commit_sent = None
+        # Função para enviar mensagem no chat do Discord
+    async def send_message(channel_id, message):
+        channel = bot.get_channel(channel_id)
+        await channel.send(message)
 
-    def check_for_commits():
-        url = f'https://api.github.com/repos/{GITHUB_OWNER}/{GITHUB_REPO}/commits'
-        response = requests.get(url)
-
-        if response.status_code == 200:
-            commits = response.json()
-            last_commit = commits[0]['sha']
-            return last_commit
-        else:
-            return None
-
-    async def commit_checker():
-        global last_commit_sent
-
-        await bot.wait_until_ready()
-        channel = bot.get_channel(DISCORD_CHANNEL_ID)
-
-        while not bot.is_closed():
-            last_commit = check_for_commits()
-
-            if last_commit and last_commit != last_commit_sent:
-                await channel.send(f'Novo commit no repositório {GITHUB_REPO}! SHA: {last_commit}')
-                last_commit_sent = last_commit
+    # Função que verifica e envia as mensagens
+    async def check_github_activity():
+        while True:
+            try:
+                # Verifique aqui as atividades do GitHub usando a API do GitHub
+                url = f'https://api.github.com/repos/{GITHUB_OWNER}/{GITHUB_REPO}/commits'
+                response = requests.get(url)
+                
+                if response.status_code == 200:
+                    commits = response.json()
+                    
+                    for commit in commits:
+                        commit_msg = commit['commit']['message']
+                        await send_message(DISCORD_CHANNEL_ID, f'Commit no GitHub: {commit_msg}')
+                        
+                else:
+                    print(f'Erro ao acessar a API do GitHub. Código de resposta: {response.status_code}')
+            except Exception as e:
+                print(f'Ocorreu uma exceção: {e}')
             
-            await asyncio.sleep(60)  # Verifica a cada 60 segundos
-   
+            # Aguarde 1 minuto antes de verificar novamente
+            await asyncio.sleep(60)
+        
     # Falar para o console que o BOT está on
     @bot.event
     async def on_ready():
-        print(f'Estou online e funcionando {bot.user}!')
-        bot.loop.create_task(commit_checker())
+        print(f'Estou online e funcionando como {bot.user}!')
 
     bot.run(TOKEN)
