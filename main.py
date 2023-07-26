@@ -55,38 +55,10 @@ else:
     GITHUB_OWNER = 'LucasFeijoDev'
     GITHUB_REPO = 'DiscordDevPdeBot'
 
-    # Função para enviar mensagem no chat do Discord
-    async def send_message(channel_id, message):
-        channel = bot.get_channel(channel_id)
-        await channel.send(message)
-
-    # Função que verifica e envia as mensagens
-    async def check_github_activity():
-        while True:
-            # Verifique aqui as atividades do GitHub usando a API do GitHub
-            url = f'https://api.github.com/repos/{GITHUB_OWNER}/{GITHUB_REPO}/events'
-            response = requests.get(url)
-            
-            if response.status_code == 200:
-                events = response.json()
-                
-                for event in events:
-                    # Verificar o tipo de evento (commit, merge, etc.)
-                    if event['type'] == 'PushEvent':
-                        commit_msg = event['payload']['commits'][0]['message']
-                        await send_message(DISCORD_CHANNEL_ID, f'Commit no GitHub: {commit_msg}')
-                    elif event['type'] == 'PullRequestEvent':
-                        action = event['payload']['action']
-                        pr_title = event['payload']['pull_request']['title']
-                        await send_message(DISCORD_CHANNEL_ID, f'Pull Request {action}: {pr_title}')
-                    # Adicione mais verificações de eventos conforme necessário
-            
-            # Aguarde 1 minuto antes de verificar novamente
-            await asyncio.sleep(60)
            
     # Falar para o console que o BOT está on
     @bot.event
     async def on_ready():
         print(f'Estou online e funcionando como {bot.user}!')
-        
+
     bot.run(TOKEN)
