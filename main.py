@@ -55,6 +55,8 @@ else:
     GITHUB_OWNER = 'LucasFeijoDev'
     GITHUB_REPO = 'DiscordDevPdeBot'
 
+    last_commit_sent = None
+
     def check_for_commits():
         url = f'https://api.github.com/repos/{GITHUB_OWNER}/{GITHUB_REPO}/commits'
         response = requests.get(url)
@@ -67,6 +69,8 @@ else:
             return None
 
     async def commit_checker():
+        global last_commit_sent
+
         await bot.wait_until_ready()
         channel = bot.get_channel(DISCORD_CHANNEL_ID)
 
