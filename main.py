@@ -81,7 +81,7 @@ else:
                 await channel.send(f'Novo commit no repositório {GITHUB_REPO}!')
                 last_commit_sent = last_commit
 
-            await asyncio.sleep(60)  # Verifica a cada 60 segundos
+            await asyncio.sleep(10)  # Verifica a cada 60 segundos
    
     # Falar para o console que o BOT está on
     @bot.event
