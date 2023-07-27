@@ -7,6 +7,8 @@ from dotenv import load_dotenv
 import requests
 import asyncio
 
+from flask import Flask, request, jsonify
+
 intents = discord.Intents.default()
 intents.typing = True                
 intents.messages = True              
@@ -15,6 +17,7 @@ intents.guilds = True
 intents.message_content = True
 
 bot = commands.Bot(command_prefix='p!', intents=intents)
+app = Flask(__name__)
 
 load_dotenv()
 
@@ -55,10 +58,21 @@ else:
     GITHUB_OWNER = 'LucasFeijoDev'
     GITHUB_REPO = 'DiscordDevPdeBot'
 
+    @app.route("/github-webhook", methods=["POST"])
+    async def github_webhook(request):
+        data = await request.json()
+        if "commits" in data:
+            for commit in data["commits"]:
+                message = f"Novo commit de {commit['author']['name']}: {commit['message']}"
+                channel_id = DISCORD_CHANNEL_ID  # Substitua pelo ID do canal do Discord desejado
+                channel = bot.get_channel(channel_id)
+                await channel.send(message)
+        return jsonify({"message": "OK"})  # Respondendo ao webhook do GitHub
+        
            
     # Falar para o console que o BOT está on
     @bot.event
     async def on_ready():
         print(f'Estou online e funcionando como {bot.user}!')
-
-    bot.run(TOKEN)
+    if __name__ == "__main__":
+        bot.run(TOKEN)
