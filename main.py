@@ -7,8 +7,6 @@ from dotenv import load_dotenv
 import requests
 import asyncio
 
-from flask import Flask, request, jsonify
-
 intents = discord.Intents.default()
 intents.typing = True                
 intents.messages = True              
@@ -17,7 +15,6 @@ intents.guilds = True
 intents.message_content = True
 
 bot = commands.Bot(command_prefix='p!', intents=intents)
-app = Flask(__name__)
 
 load_dotenv()
 
@@ -58,21 +55,35 @@ else:
     GITHUB_OWNER = 'LucasFeijoDev'
     GITHUB_REPO = 'DiscordDevPdeBot'
 
-    @app.route("/github-webhook", methods=["POST"])
-    async def github_webhook(request):
-        data = await request.json()
-        if "commits" in data:
-            for commit in data["commits"]:
-                message = f"Novo commit de {commit['author']['name']}: {commit['message']}"
-                channel_id = DISCORD_CHANNEL_ID  # Substitua pelo ID do canal do Discord desejado
-                channel = bot.get_channel(channel_id)
-                await channel.send(message)
-        return jsonify({"message": "OK"})  # Respondendo ao webhook do GitHub
-        
-           
+    async def check_github_commits():
+        url = f"https://api.github.com/repos/{GITHUB_OWNER}/{GITHUB_REPO}/commits"
+        headers = {"Accept": "application/vnd.github.v3+json"}
+
+        try:
+            response = requests.get(url, headers=headers)
+            response.raise_for_status()
+            commits_data = response.json()
+
+            latest_commit = commits_data[0]
+            message = f"Novo commit de {latest_commit['commit']['author']['name']}: {latest_commit['commit']['message']}"
+
+            channel = bot.get_channel(DISCORD_CHANNEL_ID)
+            await channel.send(message)
+
+        except requests.exceptions.RequestException as e:
+            print(f"Erro na requisição ao GitHub: {e}")
+
+    async def background_task():
+        await bot.wait_until_ready()
+        while not bot.is_closed():
+            await check_github_commits()
+            await asyncio.sleep(10)
+
     # Falar para o console que o BOT está on
     @bot.event
     async def on_ready():
         print(f'Estou online e funcionando como {bot.user}!')
+        bot.loop.create_task(background_task())
+
     if __name__ == "__main__":
         bot.run(TOKEN)
