@@ -55,7 +55,11 @@ else:
     GITHUB_OWNER = 'LucasFeijoDev'
     GITHUB_REPO = 'DiscordDevPdeBot'
 
+    last_commit_datetime = None
+
     async def check_github_commits():
+        global last_commit_datetime
+
         url = f"https://api.github.com/repos/{GITHUB_OWNER}/{GITHUB_REPO}/commits"
         headers = {"Accept": "application/vnd.github.v3+json"}
 
@@ -64,11 +68,15 @@ else:
             response.raise_for_status()
             commits_data = response.json()
 
-            latest_commit = commits_data[0]
-            message = f"Novo commit de {latest_commit['commit']['author']['name']}: {latest_commit['commit']['message']}"
+            for commit in commits_data:
+                commit_datetime = commit['commit']['author']['date']
+                if last_commit_datetime is None or commit_datetime > last_commit_datetime:
+                    message = f"Novo commit de {commit['commit']['author']['name']}: {commit['commit']['message']}"
+                    channel = bot.get_channel(DISCORD_CHANNEL_ID)
+                    await channel.send(message)
 
-            channel = bot.get_channel(DISCORD_CHANNEL_ID)
-            await channel.send(message)
+            if commits_data:
+                last_commit_datetime = commits_data[0]['commit']['author']['date']
 
         except requests.exceptions.RequestException as e:
             print(f"Erro na requisição ao GitHub: {e}")
