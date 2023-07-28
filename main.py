@@ -68,6 +68,8 @@ else:
             response.raise_for_status()
             commits_data = response.json()
 
+            commits_data = commits_data[::-1]
+
             for commit in commits_data:
                 commit_datetime = commit['commit']['author']['date']
                 if last_commit_datetime is None or commit_datetime > last_commit_datetime:
