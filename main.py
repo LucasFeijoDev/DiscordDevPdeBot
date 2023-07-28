@@ -27,7 +27,8 @@ else:
     # Comando de ajuda
     @bot.command()
     async def ajuda(ctx):
-        await ctx.send('Estou configurando certinho o comando de ajuda, mas em breve eu posso te ajudar.')
+        nome = ctx.author.mention
+        await ctx.send(f'''Olá {nome} temos diversos comandos que você pode consultar aqui: \np!ajuda \np!falar \np!ping''')
 
     #Comando de brincadeira Ping
     @bot.command()
@@ -50,6 +51,7 @@ else:
 
         await bot.process_commands(message)
 
+    '''
     #Comentando sempre que tem algum commit no repositório
     DISCORD_CHANNEL_ID = 1133787510301003806
     GITHUB_OWNER = 'LucasFeijoDev'
@@ -88,12 +90,13 @@ else:
         while not bot.is_closed():
             await check_github_commits()
             await asyncio.sleep(10)
+    '''
 
     # Falar para o console que o BOT está on
     @bot.event
     async def on_ready():
         print(f'Estou online e funcionando como {bot.user}!')
-        bot.loop.create_task(background_task())
+        #bot.loop.create_task(background_task())
 
     if __name__ == "__main__":
         bot.run(TOKEN)
